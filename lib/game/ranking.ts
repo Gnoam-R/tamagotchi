@@ -51,7 +51,7 @@ function careerScore(c: Character): number {
 
 function healthScore(c: Character): number {
   const s = c.status;
-  const weightOk = weightVerdict(s.weight, c.ageYears) === "healthy" ? 100 : 40;
+  const weightOk = weightVerdict(s.weight, c.ageYears, c.gender) === "healthy" ? 100 : 40;
   return Math.round(
     s.health * 0.5 +
       (100 - s.burnout) * 0.2 +

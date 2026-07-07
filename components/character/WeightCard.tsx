@@ -13,8 +13,8 @@ import {
 
 export function WeightCard({ character }: { character: Character }) {
   const w = character.status.weight;
-  const [lo, hi] = healthyRangeForAge(character.ageYears);
-  const v = weightVerdict(w, character.ageYears);
+  const [lo, hi] = healthyRangeForAge(character.ageYears, character.gender);
+  const v = weightVerdict(w, character.ageYears, character.gender);
   const h = currentHeight(character);
   const build = heightBuild(character.heightPotential, character.gender);
 

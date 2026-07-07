@@ -3,14 +3,13 @@ import { clamp, clampStatus, round2 } from "./clamp";
 import {
   DECAY_PER_HOUR,
   DECAY_SCALE,
-  HEALTHY_WEIGHT,
   MAX_AGE,
   NO_EXERCISE_THRESHOLD_MS,
   WEIGHT_CATCHUP_RATE_PER_HOUR,
   WEIGHT_GAIN_NO_EXERCISE_PER_HOUR,
 } from "./constants";
 import { ageFromBornAt, cappedStageForAge } from "./growth";
-import { averageWeightForAge, weightTickPenalty } from "./weight";
+import { averageWeightForAge, healthyRangeForAge, weightTickPenalty } from "./weight";
 
 /**
  * 시간 경과에 따른 상태 변화를 적용한다. (서버/클라이언트 공용 순수 함수)
@@ -74,14 +73,14 @@ export function applyDecay(c: Character, now: number): Character {
     // 바뀔 때마다(적정 체중이 훌쩍 뛸 때마다) 못 따라가고 만성 저체중이 된다.
     // 나이대 "평균 체중"을 자연 성장 기준점으로 삼아 그 아래면 서서히 따라잡고,
     // 평균 이상은 순전히 식사/운동(먹은 음식·활동)에 따라 갈린다.
-    const avg = averageWeightForAge(age);
+    const avg = averageWeightForAge(age, c.gender);
     if (s.weight < avg) {
       const gap = avg - s.weight;
       s.weight += Math.min(gap, gap * WEIGHT_CATCHUP_RATE_PER_HOUR * dh);
     }
 
     // 몸무게 페널티
-    const wp = weightTickPenalty(s.weight, age, hours);
+    const wp = weightTickPenalty(s.weight, age, hours, c.gender);
     s.health += wp.health;
     s.focus += wp.focus;
     s.energy += wp.energy;
@@ -101,7 +100,7 @@ export function applyDecay(c: Character, now: number): Character {
   // 나이와 무관하게 키는 자동 성장하는데 체중은 먹기로만 오르는 불균형 해소.
   // (전 단계 60게임년 × 9분/년 = 9h, 5kg/h → 아기 10kg→성인 55kg 자연 도달)
   if (hours > 0) {
-    const [wMin] = HEALTHY_WEIGHT[next.lifeStage];
+    const [wMin] = healthyRangeForAge(next.ageYears, next.gender);
     if (next.status.weight < wMin) {
       next.status.weight = round2(Math.min(wMin, next.status.weight + 5.0 * hours));
     }

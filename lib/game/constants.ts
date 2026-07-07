@@ -89,9 +89,11 @@ export const LIFE_STAGES: StageInfo[] = [
 ];
 
 // ---------------------------------------------------------------------------
-// 적정 몸무게 (성장 단계별)
+// 적정 몸무게 (성장 단계 × 성별)
+// 남성 기준 평균 175cm / 여성 기준 평균 162cm, BMI 18.5~25 근사
 // ---------------------------------------------------------------------------
 
+/** @deprecated weight.ts healthyRangeForAge(age, gender) 사용 권장 — 성별 미분리 구형 호환용 */
 export const HEALTHY_WEIGHT: Record<LifeStage, [number, number]> = {
   baby: [8, 15],
   child: [15, 30],
@@ -103,6 +105,21 @@ export const HEALTHY_WEIGHT: Record<LifeStage, [number, number]> = {
   employee: [55, 85],
   senior: [55, 88],
   retirement: [52, 85],
+};
+
+export const HEALTHY_WEIGHT_MALE: Record<LifeStage, [number, number]> = HEALTHY_WEIGHT;
+
+export const HEALTHY_WEIGHT_FEMALE: Record<LifeStage, [number, number]> = {
+  baby: [8, 15],
+  child: [13, 26],
+  elementary: [20, 38],
+  middle: [33, 55],
+  high: [42, 63],
+  university: [44, 68],
+  jobseeker: [44, 68],
+  employee: [46, 72],
+  senior: [46, 75],
+  retirement: [44, 72],
 };
 
 // ---------------------------------------------------------------------------

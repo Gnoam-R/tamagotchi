@@ -136,7 +136,7 @@ export function scoreYear(
   counters: YearCounters,
   status: CharacterStatus,
   age: number,
-  opts?: { neutralStatus?: boolean },
+  opts?: { neutralStatus?: boolean; gender?: import("@/types/character").Gender },
 ): number {
   const T = YEARLY_TARGETS;
   const cap = (count: number, target: number) =>
@@ -149,7 +149,7 @@ export function scoreYear(
   const stress = neutral ? 50 : status.stress;
   const weightScore = neutral
     ? 70
-    : weightVerdict(status.weight, age) === "healthy"
+    : weightVerdict(status.weight, age, opts?.gender) === "healthy"
       ? 100
       : 40;
   const raw =
@@ -265,6 +265,7 @@ export function runDueReviews(
   } else {
     score = scoreYear(ch.yearCounters, ch.status, reviewAge, {
       neutralStatus: multiYear,
+      gender: ch.gender,
     });
     grade = gradeOf(score);
     let effect = reviewEffect(grade);
